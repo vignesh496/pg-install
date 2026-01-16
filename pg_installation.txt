@@ -1,0 +1,44 @@
+i am about to make an automation script for postgrsql installation. i will give u the following cmds. this will be running only on linux 
+this is the installation script in debug mode. also for compilers we are about to use llvm19
+
+
+postgresql installation from source code.
+
+mkdir ~/installs
+cd ~/installs
+
+git clone https://github.com/postgres/postgres.git
+cd ~/installs/postgres
+git checkout REL_17_STABLE
+
+cd ~/installs
+
+click to download --> https://github.com/llvm/llvm-project/releases/download/llvmorg-19.1.1/LLVM-19.1.1-Linux-X64.tar.xz
+tar -xvf ~/Downloads/LLVM-19.1.1-Linux-X64.tar.xz ~/installs
+mv ~/installs/LLVM-19.1.1-Linux-X64 ~/installs/llvm19
+
+mkdir ~installs/pg-debug
+cd ~/installs/pg-debug
+
+CC=~/installs/llvm19/bin/clang
+CXX=~/installs/llvm19/bin/clang++
+CFLAGS="-O0 -g -DRANDOMIZE_ALLOCATED_MEMORY -fno-omit-frame-pointer" ~/installs/postgres/configure --prefix=~/installs/pg-debug --enable-cassert --enable-debug --enable-depend --with-llvm
+
+make -j8
+make install
+
+mkdir -p ~/installs/data
+~/installs/pg-debug/bin/initdb -D ~/installs/data
+
+~/installs/pg-debug/bin/pg_ctl -D ~/installs/data -l logfile start
+
+
+
+
+
+
+
+
+
+
+
